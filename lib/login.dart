@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toko_ku/Home.dart';
+import 'package:toko_ku/api.service.dart';
 import 'package:toko_ku/register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,8 +11,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final ApiService api = ApiService();
+  bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
@@ -44,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 40),
                   TextFormField(
-                    controller: _emailController,
+                    controller: _usernameController,
                     decoration: InputDecoration(
                       labelText: 'Username',
                       labelStyle: TextStyle(color: Colors.white),
@@ -110,15 +113,31 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // Logika login di sini (misalnya, panggil API)
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Login berhasil!')),
+                        setState(() => isLoading = true);
+
+                        final result = await api.login(
+                          _usernameController.text.trim(),
+                          _passwordController.text.trim(),
                         );
+
+                        setState(() => isLoading = false);
+
+                        if (result["success"] == true) {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                            (route) => false,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(result["message"] ?? "Login gagal")),
+                          );
+                        }
                       }
                     },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
