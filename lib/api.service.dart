@@ -82,7 +82,7 @@ class ApiService {
   // -----------------------------
   Future<Map<String, dynamic>> getUser() async {
     final token = await _getToken();
-    final url = Uri.parse("$baseUrl/user");
+    final url = Uri.parse("$baseUrl/profile");
 
     try {
       final res = await http.get(
@@ -98,7 +98,7 @@ class ApiService {
     } catch (e) {
       return {
         "success": false,
-        "message": "Gagal mengambil data user: $e"
+        "message": "Gagal memuat profil: $e"
       };
     }
   }

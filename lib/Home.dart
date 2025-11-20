@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toko_ku/Profile.dart';
 
 // Placeholder class untuk setiap halaman
 class BerandaPage extends StatelessWidget {
@@ -25,7 +26,7 @@ class CariPage extends StatelessWidget {
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Halaman Profile', style: TextStyle(fontSize: 24)));
+    return Profile();
   }
 }
 
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey, // Warna item tidak aktif
         backgroundColor: Colors.black, // Background nav bar
         onTap: _onItemTapped, // Handler tap
-        type: BottomNavigationBarType.fixed, // Fixed untuk 5 item
+        type: BottomNavigationBarType.fixed, // Fixed untuk 4 item
       ),
     );
   }

@@ -11,7 +11,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final String text = "TokoSK";
+  final String text = "TokoSRC";
   List<bool> _visibleLetters = []; // List untuk track visibility setiap huruf
 
   @override
