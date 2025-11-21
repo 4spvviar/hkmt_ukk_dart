@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:toko_ku/Home(api).dart';
+import 'package:toko_ku/Produk.dart';
 import 'package:toko_ku/Profile.dart';
 
 // Placeholder class untuk setiap halaman
-class BerandaPage extends StatelessWidget {
+class TokoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Halaman Beranda', style: TextStyle(fontSize: 24)));
-  }
-}
-
-class ProdukPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Halaman Produk', style: TextStyle(fontSize: 24)));
-  }
-}
-
-class CariPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Halaman Cari', style: TextStyle(fontSize: 24)));
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Profile();
+    return Center(child: Text('Halaman Toko', style: TextStyle(fontSize: 24)));
   }
 }
 
@@ -42,9 +23,9 @@ class _HomePageState extends State<HomePage> {
 
   // List halaman untuk switch
   final List<Widget> _pages = [
-    BerandaPage(),
+    HomeProdPage(),
     ProdukPage(),
-    CariPage(),
+    TokoPage(),
     ProfilePage(),
   ];
 
@@ -57,7 +38,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex], // Tampilkan halaman berdasarkan index
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ), // Tampilkan halaman berdasarkan index
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -69,8 +53,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Produk',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Cari',
+            icon: Icon(Icons.shop),
+            label: 'Toko',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 
 class ApiService {
@@ -109,5 +112,183 @@ class ApiService {
   Future<bool> logout() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.remove("token");
+  }
+  // -----------------------------
+  // GET ALL PRODUCTS
+  // -----------------------------
+  Future<List<dynamic>> getProducts() async {
+    final url = Uri.parse("$baseUrl/products");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        // API tampaknya merespon { "data": [ ... ] }
+        return data["data"] ?? [];
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // -----------------------------
+  // GET PRODUCT DETAIL
+  // -----------------------------
+  Future<Map<String, dynamic>?> getProductDetail(int idProduk) async {
+    final url = Uri.parse("$baseUrl/products/$idProduk/show");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        return data["data"] ?? data;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // -----------------------------
+  // GET PRODUCT IMAGES (by product id)
+  // GET /products/{id}/images  (sesuai soal)
+  // -----------------------------
+  Future<List<dynamic>> getProductImages(int idProduk) async {
+    final url = Uri.parse("$baseUrl/products/$idProduk/images");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        return data["data"] ?? [];
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // -----------------------------
+  // SAVE PRODUCT (create or update)
+  // POST /products/save
+  // jika edit sertakan id_produk
+  // -----------------------------
+  Future<Map<String, dynamic>> saveProduct({
+    int? idProduk,
+    required int idKategori,
+    required String namaProduk,
+    required int harga,
+    required int stok,
+    required String deskripsi,
+  }) async {
+    final token = await _getToken();
+    final url = Uri.parse("$baseUrl/products/save");
+
+    try {
+      final body = {
+        if (idProduk != null) "id_produk": idProduk.toString(),
+        "id_kategori": idKategori.toString(),
+        "nama_produk": namaProduk,
+        "harga": harga.toString(),
+        "stok": stok.toString(),
+        "deskripsi": deskripsi,
+      };
+
+      final res = await http.post(
+        url,
+        headers: {
+          if (token != null) "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(body),
+      );
+
+      return jsonDecode(res.body);
+    } catch (e) {
+      return {"success": false, "message": "Gagal menyimpan produk: $e"};
+    }
+  }
+
+  // -----------------------------
+  // UPLOAD GAMBAR PRODUK (dipakai saat CREATE)
+  // POST /products/images/upload (multipart/form-data)
+  // field: file (image), id_produk (string/int)
+  // -----------------------------
+  Future<Map<String, dynamic>> uploadProductImage({
+    required int idProduk,
+    required File imageFile,
+  }) async {
+    final token = await _getToken();
+    final uri = Uri.parse("$baseUrl/products/images/upload");
+
+    try {
+      final request = http.MultipartRequest('POST', uri);
+      if (token != null) request.headers['Authorization'] = 'Bearer $token';
+
+      // tambahkan fields
+      request.fields['id_produk'] = idProduk.toString();
+
+      // tambahkan file
+      final mimeType = lookupMimeType(imageFile.path) ?? 'image/jpeg';
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file', // sesuai nama field di server; cek server kalau beda ganti di sini
+        imageFile.path,
+        contentType: MediaType.parse(mimeType),
+      );
+
+      request.files.add(multipartFile);
+
+      final streamedResponse = await request.send();
+      final res = await http.Response.fromStream(streamedResponse);
+
+      return jsonDecode(res.body);
+    } catch (e) {
+      return {"success": false, "message": "Gagal upload gambar: $e"};
+    }
+  }
+
+  // -----------------------------
+  // DELETE PRODUCT
+  // POST /products/{id}/delete
+  // -----------------------------
+  Future<Map<String, dynamic>> deleteProduct(int idProduk) async {
+    final token = await _getToken();
+    final url = Uri.parse("$baseUrl/products/$idProduk/delete");
+
+    try {
+      final res = await http.post(
+        url,
+        headers: {
+          if (token != null) "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      return jsonDecode(res.body);
+    } catch (e) {
+      return {"success": false, "message": "Gagal menghapus produk: $e"};
+    }
+  }
+
+  // =======================================================
+  //  GET CATEGORIES
+  // =======================================================
+  Future<List<dynamic>> getCategories() async {
+    final url = Uri.parse("$baseUrl/categories");
+
+    try {
+      final res = await http.get(url);
+
+      final data = jsonDecode(res.body);
+
+      if (data["success"] == true) {
+        return data["data"]; // list kategori
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
   }
 }
