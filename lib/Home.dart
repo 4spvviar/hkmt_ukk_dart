@@ -62,8 +62,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex, // Index aktif
-        selectedItemColor: Colors.blueAccent, // Warna item aktif
-        unselectedItemColor: Colors.grey, // Warna item tidak aktif
+        selectedItemColor: Color(0xFFD3D39F), // Warna item aktif
+        unselectedItemColor: Color(0xFF493D18), // Warna item tidak aktif
         backgroundColor: Colors.black, // Background nav bar
         onTap: _onItemTapped, // Handler tap
         type: BottomNavigationBarType.fixed, // Fixed untuk 4 item

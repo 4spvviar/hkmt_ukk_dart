@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blueAccent.shade700, Colors.black], // Biru neon ke hitam
+            colors: [Color(0xFFA4A867), Colors.greenAccent.shade700], // Biru neon ke hitam
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

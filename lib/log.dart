@@ -11,7 +11,8 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final String text = "TokoSRC";
+  final String text = "FJB";
+  IconData iconData = Icons.store; // Ikon toko
   List<bool> _visibleLetters = []; // List untuk track visibility setiap huruf
 
   @override
@@ -42,7 +43,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.black, Colors.blueAccent.shade700], // Hitam gradasi ke biru neon
+            colors: [Color(0xFFA4A867), Colors.greenAccent.shade700], // Hitam gradasi ke biru neon
             begin: Alignment.bottomCenter,
             end: Alignment.topRight,
           ),
