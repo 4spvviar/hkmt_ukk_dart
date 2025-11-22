@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:mime/mime.dart';
 
 
 class ApiService {
