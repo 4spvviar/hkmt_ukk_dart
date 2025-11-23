@@ -24,7 +24,7 @@ class _ProductCreateState extends State<ProductCreate> {
         keyboardType: number ? TextInputType.number : TextInputType.text,
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.grey.shade100,
+          fillColor: Color(0xFFA4A867).withOpacity(0.1),
           contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 14),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
@@ -154,7 +154,7 @@ class _ProductCreateState extends State<ProductCreate> {
       appBar: AppBar(
         title: const Text("Tambah Produk"),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
+        foregroundColor: Color(0xFF493D18),
         elevation: 0,
       ),
 

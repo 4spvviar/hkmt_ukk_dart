@@ -21,7 +21,7 @@ class _RegistPageState extends State<RegistPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blueAccent.shade700, Colors.black], // Biru neon ke hitam
+            colors: [Color(0xFFA4A867), Colors.greenAccent], // Biru neon ke hitam
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -160,7 +160,7 @@ class _RegistPageState extends State<RegistPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Color(0xFFA4A867),
                       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),

@@ -78,7 +78,7 @@ class _HomePageState extends State<HomeProdPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.blueAccent.shade700,
+            Color(0xFF493D18),
             Colors.black,
           ],
           begin: Alignment.topLeft,

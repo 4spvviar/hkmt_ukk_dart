@@ -76,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xff2f58cd), Colors.black],
+                colors: [Color(0xFFA4A867), Colors.black],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

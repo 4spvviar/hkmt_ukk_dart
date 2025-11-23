@@ -92,11 +92,11 @@ class _ProdukPageState extends State<ProdukPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Produk", style: TextStyle(color: Colors.blueAccent)),
+        title: Text("Produk", style: TextStyle(color: Color(0xFF493D18))),
       ),
 
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Color(0xFF493D18),
         onPressed: () async {
           final res = await Navigator.push(
             context,
@@ -112,7 +112,7 @@ class _ProdukPageState extends State<ProdukPage> {
           : Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.blueAccent.shade700, Colors.black],
+                  colors: [Color(0xFF493D18), Colors.black],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

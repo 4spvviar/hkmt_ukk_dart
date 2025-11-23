@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:toko_ku/Home(api).dart';
 import 'package:toko_ku/Produk.dart';
 import 'package:toko_ku/Profile.dart';
+import 'package:toko_ku/store_form.dart';
+import 'package:toko_ku/store_page.dart';
 
 // Placeholder class untuk setiap halaman
 class TokoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Halaman Toko', style: TextStyle(fontSize: 24)));
+    return StorePage();
   }
 }
 
@@ -27,6 +29,8 @@ class _HomePageState extends State<HomePage> {
     ProdukPage(),
     TokoPage(),
     ProfilePage(),
+    StoreFormPage(),
+    StorePage(),
   ];
 
   // Fungsi untuk ganti halaman

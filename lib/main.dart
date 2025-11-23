@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toko_ku/log.dart';
+import 'package:toko_ku/store_form.dart';
+import 'package:toko_ku/store_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,9 +12,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashPage(),
+      home: const SplashPage(),
+      routes: {
+      "/store": (context) => const StorePage(),
+      "/store-form": (context) => const StoreFormPage(),
+    }
     );
   }
 }
