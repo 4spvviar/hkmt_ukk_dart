@@ -201,7 +201,7 @@ class _ProductCreateState extends State<ProductCreate> {
                     value: kategori,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.grey.shade100,
+                      fillColor: Color(0xFF493D18),
                       contentPadding: EdgeInsets.symmetric(horizontal: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -263,7 +263,7 @@ class _ProductCreateState extends State<ProductCreate> {
               child: ElevatedButton(
                 onPressed: isSaving ? null : doSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Color(0xFF493D18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

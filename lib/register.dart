@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toko_ku/login.dart';
+import 'package:hkmt_ukk_dart/login.dart';
 
 class RegistPage extends StatefulWidget {
   const RegistPage({super.key});
@@ -21,7 +21,7 @@ class _RegistPageState extends State<RegistPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFA4A867), Colors.greenAccent], // Biru neon ke hitam
+            colors: [Color(0xFFA4A867), Colors.black], // Biru neon ke hitam
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

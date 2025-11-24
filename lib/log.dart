@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:toko_ku/login.dart';
+import 'package:hkmt_ukk_dart/login.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -43,7 +43,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFA4A867), Colors.greenAccent.shade700], // Hitam gradasi ke biru neon
+            colors: [Color(0xFF493D18), Colors.black], // Hitam gradasi ke biru neon
             begin: Alignment.bottomCenter,
             end: Alignment.topRight,
           ),

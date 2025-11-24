@@ -291,37 +291,34 @@ class ApiService {
 
   // =======================================================
   // SAVE STORE (create or update)
-  Future<Map<String, dynamic>> saveStore(
+  Future<Map<String, dynamic>> saveStoreWeb(
   Map<String, String> fields, {
-  File? image,
+  required List<int> bytes,
+  required String filename,
 }) async {
   final token = await _getToken();
+
   var uri = Uri.parse("$baseUrl/stores/save");
   var request = http.MultipartRequest("POST", uri);
 
-  // Token
   if (token != null) {
     request.headers["Authorization"] = "Bearer $token";
   }
 
-  // Fields sesuai API UKK
   fields.forEach((key, value) {
     request.fields[key] = value;
   });
 
-  // Upload logo (nama field: logo)
-  if (image != null) {
-    request.files.add(
-      await http.MultipartFile.fromPath("logo", image.path),
-    );
-  }
+  request.files.add(
+    http.MultipartFile.fromBytes(
+      "logo",
+      bytes,
+      filename: filename,
+    ),
+  );
 
-  // Kirim request
   final streamed = await request.send();
   final response = await http.Response.fromStream(streamed);
-
-  print("saveStore response status: ${response.statusCode}");
-  print("saveStore response body: ${response.body}");
 
   return jsonDecode(response.body);
 }

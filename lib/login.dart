@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:toko_ku/Home.dart';
-import 'package:toko_ku/api.service.dart';
-import 'package:toko_ku/register.dart';
+import 'package:hkmt_ukk_dart/Home.dart';
+import 'package:hkmt_ukk_dart/api.service.dart';
+import 'package:hkmt_ukk_dart/register.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFA4A867), Colors.greenAccent.shade700], // Biru neon ke hitam
+            colors: [Color(0xFF493D18), Colors.black], // Biru neon ke hitam
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:toko_ku/AProduk.dart';
-import 'package:toko_ku/EProduk.dart';
+import 'package:hkmt_ukk_dart/AProduk.dart';
+import 'package:hkmt_ukk_dart/EProduk.dart';
 import '../api.service.dart';
 
 class ProdukPage extends StatefulWidget {

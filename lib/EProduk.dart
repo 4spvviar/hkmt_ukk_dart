@@ -201,7 +201,7 @@ class _ProductEditState extends State<ProductEdit> {
       child: ElevatedButton(
         onPressed: saveEdit,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Color(0xFF493D18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),

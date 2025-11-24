@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toko_ku/api.service.dart';
+import 'package:hkmt_ukk_dart/api.service.dart';
 
 class StoreFormPage extends StatefulWidget {
   const StoreFormPage({super.key});
@@ -17,6 +18,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
   final addressCtrl = TextEditingController();
   final waCtrl = TextEditingController();
 
+  XFile? pickedImage;
   File? logoFile;
   Map<String, dynamic>? store;
   bool isSubmitting = false;
@@ -24,66 +26,78 @@ class _StoreFormPageState extends State<StoreFormPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     store = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
     if (store != null) {
       nameCtrl.text = store!["nama_toko"] ?? "";
       descCtrl.text = store!["deskripsi"] ?? "";
-      addressCtrl.text = store!["kontak_toko"] ?? "";
-      waCtrl.text = store!["alamat"] ?? "";
+      addressCtrl.text = store!["alamat"] ?? "";
+      waCtrl.text = store!["kontak_toko"] ?? "";
     }
   }
 
   Future<void> pickLogo() async {
     try {
-      final picker = ImagePicker();
-      final img = await picker.pickImage(source: ImageSource.gallery);
+      final img = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (img != null) {
-        setState(() => logoFile = File(img.path));
+        setState(() {
+          pickedImage = img;
+          if (!kIsWeb) {
+            logoFile = File(img.path);
+          }
+        });
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memilih gambar: $e')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal memilih gambar: $e")),
+      );
     }
   }
 
   Future<void> submit() async {
     if (!formKey.currentState!.validate()) return;
 
-    print("Submitting store with data: name='${nameCtrl.text}', description='${descCtrl.text}', address='${addressCtrl.text}', whatsapp='${waCtrl.text}', logo file: $logoFile");
+    setState(() => isSubmitting = true);
 
-    setState(() {
-      isSubmitting = true;
-    });
+    Map<String, dynamic> response;
 
-      final response = await ApiService().saveStore(
+    // ========= HANDLE WEB =========
+    if (kIsWeb && pickedImage != null) {
+      final bytes = await pickedImage!.readAsBytes();
+      response = await ApiService().saveStoreWeb(
         {
           "nama_toko": nameCtrl.text.trim(),
           "deskripsi": descCtrl.text.trim(),
-          "kontak_toko": addressCtrl.text.trim(),
-          "alamat": waCtrl.text.trim(),
+          "alamat": addressCtrl.text.trim(),
+          "kontak_toko": waCtrl.text.trim(),
         },
-        image: logoFile, // keep param name unchanged here as it maps to 'gambar' in API service
+        bytes: bytes,
+        filename: pickedImage!.name,
       );
+    }
+    // ========= HANDLE MOBILE =========
+    else {
+      response = await ApiService().saveStoreWeb(
+        {
+          "nama_toko": nameCtrl.text.trim(),
+          "deskripsi": descCtrl.text.trim(),
+          "alamat": addressCtrl.text.trim(),
+          "kontak_toko": waCtrl.text.trim(),
+        },
+        bytes: await logoFile!.readAsBytes(),
+        filename: logoFile!.path.split("/").last,
+      );
+    }
 
+    setState(() => isSubmitting = false);
 
-    setState(() {
-      isSubmitting = false;
-    });
-
-    if (response["success"] != null && response["success"] == true) {
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
+    if (response["success"] == true) {
+      Navigator.pop(context, true);
     } else {
-      final message = response["message"] ?? "Gagal menyimpan toko";
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response["message"] ?? "Gagal menyimpan toko")),
+      );
     }
   }
 
@@ -106,10 +120,7 @@ class _StoreFormPageState extends State<StoreFormPage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF493D18),
-              Colors.black,
-            ],
+            colors: [Color(0xFF493D18), Colors.black],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -120,116 +131,69 @@ class _StoreFormPageState extends State<StoreFormPage> {
             key: formKey,
             child: ListView(
               children: [
+                // NAMA TOKO
                 TextFormField(
-                controller: nameCtrl,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Nama Toko",
-                  labelStyle: const TextStyle(color: Colors.white70),
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                ),
-                validator: (v) {
-                  if (v == null || v.isEmpty) {
-                    return "Nama toko harus diisi";
-                  }
-                  return null;
-                },
+                  controller: nameCtrl,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: inputStyle("Nama Toko"),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? "Nama toko harus diisi" : null,
                 ),
                 const SizedBox(height: 12),
+
+                // DESKRIPSI
                 TextFormField(
                   controller: descCtrl,
                   style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: "Deskripsi",
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  ),
+                  decoration: inputStyle("Deskripsi"),
                 ),
                 const SizedBox(height: 12),
+
+                // ALAMAT
                 TextFormField(
                   controller: addressCtrl,
                   style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: "Alamat",
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  ),
+                  decoration: inputStyle("Alamat"),
                 ),
                 const SizedBox(height: 12),
+
+                // KONTAK
                 TextFormField(
                   controller: waCtrl,
                   style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: "Nomor WhatsApp",
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  ),
+                  decoration: inputStyle("Kontak Toko"),
                 ),
                 const SizedBox(height: 20),
+
+                // UPLOAD BUTTON
                 ElevatedButton(
                   onPressed: isSubmitting ? null : pickLogo,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD3D39F),
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text(
-                    "Upload Logo",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  style: btnStyle(),
+                  child: const Text("Upload Logo",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-                if (logoFile != null)
+
+                // PREVIEW GAMBAR
+                if (pickedImage != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Image.file(logoFile!, height: 120),
+                    child: kIsWeb
+                        ? Image.network(pickedImage!.path, height: 120)
+                        : Image.file(File(pickedImage!.path), height: 120),
                   ),
+
                 const SizedBox(height: 30),
+
+                // TOMBOL SIMPAN
                 ElevatedButton(
                   onPressed: isSubmitting ? null : submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD3D39F),
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
+                  style: btnStyle(),
                   child: isSubmitting
                       ? const SizedBox(
                           height: 16,
                           width: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child:
+                              CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text(
                           "Simpan",
@@ -240,6 +204,34 @@ class _StoreFormPageState extends State<StoreFormPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  InputDecoration inputStyle(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white70),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.15),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 16,
+      ),
+    );
+  }
+
+  ButtonStyle btnStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFD3D39F),
+      foregroundColor: Colors.black,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
       ),
     );
   }
